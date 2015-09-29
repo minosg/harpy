@@ -2,14 +2,34 @@
     <head>
         <title>Add Device</title>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script type="text/javascript">
+              // Form validation
+              function validate()
+              {
+                 if( document.addForm.color.value == "" )
+                 {
+                    alert( "Please Select a Color" );
+
+                    return false;
+                 }
+                 }
+                 if( document.addForm.macdata.value == "" )
+                 {
+                    alert( "Please Select a Mac Address from the list" );
+                    return false;
+                 }
+                 return true;
+              }
+        </script>
     </head>
     <body>
+
         <div id="container">
             <div class="title">
                 <h1>Add Device to watch list</h1>
             </div>
             <div id="content">
-                <form method="post" action="{{ url_for('form') }}">
+                <form method="post" action="{{ url_for('form') }}" name="addForm" onsubmit="return(validate());">
                   <label for="alias">Please enter an Alias for HW/id:</label>
                   <input type="text" name="alias" /><br />
                   <label for="alias">Choose a color for the HW Address:</label>

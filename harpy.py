@@ -77,6 +77,7 @@ def add():
 @app.route('/form/', methods=['POST'])
 def form():
     alias     = request.form['alias']
+    if not len(alias): alias = "N.A"
     color     = request.form['color']
     mac_adddr = request.form['macdata']
     return render_template(
