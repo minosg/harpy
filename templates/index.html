@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+   <head>
+      <title>{{ title }}</title>
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+   </head>
+
+   <body>
+      <h2>Program Loaded!</h2>
+      The date and time on the server is: {{ time }}
+      <div>
+      <h2> Device Map!</h2>
+      {{dmap|safe}}
+      </div>
+      <a href="/add">Add A Device<a>
+   </body>
+</html>
