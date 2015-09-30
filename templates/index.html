@@ -2,6 +2,9 @@
    <head>
       <title>{{ title }}</title>
       <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+      <script src="static/js/application.js"></script>
    </head>
 
    <body>
@@ -12,5 +15,13 @@
       {{dmap|safe}}
       </div>
       <a href="/add">Add A Device<a>
+
+      <h2> Dynamic Data</h2>
+
+      <div class="row">
+          <p>Real Time Data</p>
+          <div id="st_table">
+      </div>
+
    </body>
 </html>

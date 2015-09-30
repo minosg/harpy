@@ -9,52 +9,32 @@ __email__ = "minos197@gmail.com"
 __project__ = "harpy"
 __date__ = "25-09-2015"
 
-from flask import Flask, render_template, request, url_for
-from collections import OrderedDict
+from flask import Flask, render_template, request, url_for, copy_current_request_context
+from flask.ext.socketio import SocketIO, emit
+
+from threading import Thread, Event
+
+from time import sleep
 import datetime
-import copy
+
+
+from formatutils import *
+from updater import PageUpdater
 
 #Test DataSet
-dt = ('server1', 'router2', 'playstation3')
-
-def tabularize_data(headers, data):
-    """ Generate an html table from dictionary data """
-
-    # Create the table header
-    table_data = "<table border=\"1\" style=\"width:300px\"><thead><tr>"
-    for h in headers:
-      table_data += "<th>%s</th>"%h
-    table_data += "</tr></thead>"
-
-    #Create Table Body
-    table_rows = ""
-    for entry in data.keys():
-      entry_dt = data[entry]
-      table_rows += "<tr><td>%s</td>"%entry
-      for e in entry_dt.keys():
-        table_rows += "<td>%s</td>"% entry_dt[e]
-      table_rows += "</tr>"
-    
-    table_data += table_rows
-    table_data += "</table>"
-
-    #print table_data
-    return table_data
-
-def gen_radio_buttons(gtype, label, data):
-    """Generate a radio buttong group for dynamic forms"""
-
-    form = "<label for=\"%s\">%s:</label>\n"%(gtype,label)
-    headers = ["IP","MAC","Hostname","Alias","Select"]
-    #make a copy of the dictionary
-    temp_data = copy.deepcopy(data)
-    
-    for entry in temp_data.keys():
-      temp_data[entry]['button']= "<input type=\"radio\" name=\"%s\" value=\"%s\" /><br />"%(gtype,temp_data[entry]["mac"])
-
-    return tabularize_data(headers,temp_data)
+# TODO remove it when testing is complete
+from test_dataset import data_d
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+app.config['DEBUG'] = True
+app.config['SERVER_NAME']='localhost:7777'
+
+# Wrap the app to a socketit for async tasks
+socketio = SocketIO(app)
+
+#random number Generator Thread
+thread = Thread()
 
 @app.route("/")
 def main():
@@ -86,5 +66,22 @@ def form():
         color=color,
         maddr=mac_adddr)
 
+@socketio.on('connect', namespace='/autoreload')
+def auto_reload():
+
+    global thread
+    print('Client connected')
+
+    # Only start if it its not already started
+    if not thread.isAlive():
+        print "Starting Thread"
+        thread = PageUpdater(socketio)
+        thread.start()
+
+@socketio.on('disconnect', namespace='/autoreload')
+def test_disconnect():
+    print('Client disconnected')
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=7777, debug=True)
+    #app.run(host='0.0.0.0', port=7777, debug=True)
+    socketio.run(app)
