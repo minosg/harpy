@@ -44,6 +44,17 @@ class PageUpdater(Thread):
         self.arp_table[key] = data_d[key]
         self.arp_table[key]["time"] = datetime.now()
 
+    def clear_color(self, color):
+        for ipkey in self.arp_table.keys():
+            entry = self.arp_table[ipkey]
+            modified = False
+            try:
+                if entry['color'] == color: entry['color'] = ""
+                modified = True
+            except KeyError:
+               pass
+        return modified
+
     def prune(self):
         """ Function that will remove old entries from arp_table"""
         

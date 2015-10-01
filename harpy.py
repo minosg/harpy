@@ -62,6 +62,7 @@ def form():
     ipsel = request.form['ipsel']
     
     arp_entry = thread.get_table()[ipsel]
+    thread.clear_color(color)
     arp_entry['color'] = color
     if len(alias): arp_entry['alias'] = alias
 
