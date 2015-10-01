@@ -55,7 +55,7 @@ class PageUpdater(Thread):
 
     def refresh(self):
 
-        headers = ["IP","MAC","Hostname","Alias", "Last Seen"]
+        headers = ["IP","MAC","Hostname","Alias", "Last Seen", "Color"]
         return tabularize_data(headers,self.arp_table)
 
 

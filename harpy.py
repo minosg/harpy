@@ -41,7 +41,6 @@ thread = Thread()
 def main():
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
-    headers = ["IP","MAC","Hostname","Alias"]
     templateData = {
         'title': 'Harpy!',
         'time': timeString
@@ -63,6 +62,8 @@ def form():
     ipsel = request.form['ipsel']
     
     arp_entry = thread.get_table()[ipsel]
+    arp_entry['color'] = color
+    if len(alias): arp_entry['alias'] = alias
 
     return render_template(
         'form_action.html',
