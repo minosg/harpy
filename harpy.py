@@ -23,7 +23,8 @@ from updater import PageUpdater
 
 #Test DataSet
 # TODO remove it when testing is complete
-from test_dataset import data_d
+from test_dataset import get_data
+data_d = get_data()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -43,15 +44,15 @@ def main():
     headers = ["IP","MAC","Hostname","Alias"]
     templateData = {
         'title': 'Harpy!',
-        'time': timeString,
-        'dmap': tabularize_data(headers,data_d)
+        'time': timeString
     }
     return render_template('index.html', **templateData)
 
 @app.route('/add')
 def add():
   # Create the buttons
-  data = gen_radio_buttons("macdata", "Select the device  you wish to bind", data_d)
+  
+  data = gen_radio_buttons("ipsel", "Select the device  you wish to bind", thread.get_table())
   return render_template('form_add.html', dyndata = data)
 
 @app.route('/form/', methods=['POST'])
@@ -59,12 +60,15 @@ def form():
     alias     = request.form['alias']
     if not len(alias): alias = "N.A"
     color     = request.form['color']
-    mac_adddr = request.form['macdata']
+    ipsel = request.form['ipsel']
+    
+    arp_entry = thread.get_table()[ipsel]
+
     return render_template(
         'form_action.html',
-        alias=alias,
-        color=color,
-        maddr=mac_adddr)
+        alias = alias,
+        color = color,
+        maddr = arp_entry["mac"])
 
 @socketio.on('connect', namespace='/autoreload')
 def auto_reload():
@@ -83,5 +87,4 @@ def test_disconnect():
     print('Client disconnected')
 
 if __name__ == "__main__":
-    #app.run(host='0.0.0.0', port=7777, debug=True)
     socketio.run(app)

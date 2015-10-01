@@ -26,7 +26,10 @@ def tabularize_data(headers, data):
       entry_dt = data[entry]
       table_rows += "<tr><td>%s</td>"%entry
       for e in entry_dt.keys():
-        table_rows += "<td>%s</td>"% entry_dt[e]
+        if e == "time":
+          table_rows += "<td>%s</td>"% entry_dt[e].strftime("%w %b %Y %H:%M:%S")
+        else:
+          table_rows += "<td>%s</td>"% entry_dt[e]
       table_rows += "</tr>"
     
     table_data += table_rows
@@ -39,14 +42,28 @@ def gen_radio_buttons(gtype, label, data):
     """Generate a radio buttong group for dynamic forms"""
 
     form = "<label for=\"%s\">%s:</label>\n"%(gtype,label)
-    headers = ["IP","MAC","Hostname","Alias","Select"]
+    headers = ["IP","MAC","Hostname","Alias","Last Seen","Select"]
     #make a copy of the dictionary
     temp_data = deepcopy(data)
     
     for entry in temp_data.keys():
-      temp_data[entry]['button']= "<input type=\"radio\" name=\"%s\" value=\"%s\" /><br />"%(gtype,temp_data[entry]["mac"])
+      temp_data[entry]['button']= "<input type=\"radio\" name=\"%s\" value=\"%s\" /><br />"%(gtype,entry)
 
     return tabularize_data(headers,temp_data)
+
+def datedelta_to_human(td, text = False):
+    """ Adjust datetime delta object in a more human friend format """
+
+    hrf = (td.days, td.seconds//3600, (td.seconds//60)%60,td.seconds % 60)
+    if not text:
+      return hrf
+    else:
+      return("%s days %s hours %s mins %s sec"%hrf)
+
+def datetime_to_human(dt):
+    """ Adjust datetime object in a more human friend format """
+
+    return dt.strftime("%w %b %Y %H:%M:%S")
 
 if __name__ == "__main__":
     pass
