@@ -3,9 +3,11 @@
         <title>Add Device</title>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
         <script src="static/js/addvalidate.js"></script>
+        <script>
+            window.onbeforeunload = function() {  window.location = "/";};
+        </script>
     </head>
     <body>
-
         <div id="container">
             <div class="title">
                 <h1>Add Device to watch list</h1>

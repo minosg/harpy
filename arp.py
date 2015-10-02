@@ -98,20 +98,15 @@ class ARPHandler(Thread):
       """ Add a new entry to the ARP table and allert if it exists and is tracked """
       
       # If the device has the same IP as before
-      if ip in self.arp_table.keys() and entry['mac'] == self.arp_table[ip]['mac']: print 1
+      if ip in self.arp_table.keys() and entry['mac'] == self.arp_table[ip]['mac']: pass
       # If the ip has been modified but address still registered
       elif entry['mac'] in repr(self.arp_table):
         for key in self.arp_table:
-          if self.arp_table[key]['mac'] == entry['mac']: 
-             print 2
-             break
-          else: 
-            print 3
-            return False
+          if self.arp_table[key]['mac'] == entry['mac']: break
+          else: return False
       # If it does not exist add it to the table
       else:
         self.arp_table[ip] = entry
-        print 4
         return True
       # Only broadcast allert if the device is tracked
       try: color = self.arp_table[ip]['color']
@@ -136,9 +131,7 @@ class ARPHandler(Thread):
       while not self._stop.isSet():
           self.fake_data()
           sleep(self.delay)
-          print "Allert Running"
-      print "Allert Stopping"
-
+      print "ARP THREAD QUIT"
   def stop(self):
     self._stop.set()
 
