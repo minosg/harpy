@@ -9,7 +9,7 @@ __email__ = "minos197@gmail.com"
 __project__ = "harpy"
 __date__ = "25-09-2015"
 
-from flask import Flask, render_template, request, url_for, copy_current_request_context
+from flask import Flask, render_template, request, url_for, copy_current_request_context ,redirect
 from flask.ext.socketio import SocketIO, emit
 
 from threading import Thread, Event
@@ -20,22 +20,33 @@ import datetime
 
 from formatutils import *
 from updater import PageUpdater
+from arp import ARPHandler
 
 #Test DataSet
 # TODO remove it when testing is complete
 from test_dataset import get_data
 data_d = get_data()
 
+# Flask App config
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
 app.config['SERVER_NAME']='localhost:7777'
 
-# Wrap the app to a socketit for async tasks
+# Wrap the app to a SocketIO for async tasks
 socketio = SocketIO(app)
 
-#random number Generator Thread
-thread = Thread()
+# Start the Background monitor thread
+arph = ARPHandler()
+arph.start()
+
+# User Gui thread
+gui = Thread()
+
+
+#################
+## Flask Routes #
+#################
 
 @app.route("/")
 def main():
@@ -51,8 +62,27 @@ def main():
 def add():
   # Create the buttons
   
-  data = gen_radio_buttons("ipsel", "Select the device  you wish to bind", thread.get_table())
+  data = gen_radio_buttons("ipsel", "Select the device  you wish to bind", arph.get_table())
   return render_template('form_add.html', dyndata = data)
+
+@app.route('/disable')
+def disable():
+  """ Stop the allert thread"""
+ 
+  if arph.isAlive():
+    arph.stop()
+  return redirect("/", code=302)
+    
+@app.route('/enable')
+def enable():
+  """ Start the allert thread """
+
+  # TODO make it maintain the table, using config or deepcopy
+  try: del(arph)
+  except UnboundLocalError: pass
+  arph = ARPHandler()
+  arph.start()
+  return redirect("/", code=302)
 
 @app.route('/form/', methods=['POST'])
 def form():
@@ -61,8 +91,8 @@ def form():
     color     = request.form['color']
     ipsel = request.form['ipsel']
     
-    arp_entry = thread.get_table()[ipsel]
-    thread.clear_color(color)
+    arp_entry = gui.get_table()[ipsel]
+    gui.clear_color(color)
     arp_entry['color'] = color
     if len(alias): arp_entry['alias'] = alias
 
@@ -73,20 +103,21 @@ def form():
         maddr = arp_entry["mac"])
 
 @socketio.on('connect', namespace='/autoreload')
-def auto_reload():
+def client_connect():
 
-    global thread
+    global gui
     print('Client connected')
 
     # Only start if it its not already started
-    if not thread.isAlive():
+    if not gui.isAlive():
         print "Starting Thread"
-        thread = PageUpdater(socketio)
-        thread.start()
+        gui = PageUpdater(socketio,arph.get_table())
+        gui.start()
 
 @socketio.on('disconnect', namespace='/autoreload')
-def test_disconnect():
+def client_disconnect():
     print('Client disconnected')
+    gui.stop()
 
 if __name__ == "__main__":
     socketio.run(app)
