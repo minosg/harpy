@@ -21,6 +21,7 @@ import datetime
 from formatutils import *
 from updater import PageUpdater
 from arp import ARPHandler
+from config import ConfigManager
 
 #Test DataSet
 # TODO remove it when testing is complete
@@ -43,6 +44,7 @@ arph.start()
 # User Gui thread
 gui = Thread()
 
+cfg = ConfigManager()
 
 #################
 ## Flask Routes #
