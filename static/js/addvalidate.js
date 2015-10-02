@@ -3,8 +3,14 @@ function validate()
 {
    if( document.addForm.color.value == "" )
    {
-      alert( "Please Select a Color" );
-      return false;
+      if (document.addForm.remove.checked) {
+          return true;
+      } else {
+          alert( "Please Select a Color" );
+          return false;
+      }
+
+
    }
    if( document.addForm.macdata.value == "" )
    {

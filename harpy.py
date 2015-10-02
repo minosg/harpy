@@ -86,21 +86,35 @@ def enable():
 
 @app.route('/form/', methods=['POST'])
 def form():
+    # Get targets ip and clear any existing color
+    ipsel = request.form['ipsel']
+    arp_entry = gui.get_table()[ipsel]
+
+    # If remove button has been checked clear color and return to home
+    try:
+      request.form['remove']
+      action = "removed from"
+      arp_entry['color'] = ""
+      return redirect("/", code=302)
+    except: 
+      action = "added to"
+
+    # Read user selected color and clear it if enabled in another client
+    color     = request.form['color']
+    gui.clear_color(color)
     alias     = request.form['alias']
     if not len(alias): alias = "N.A"
-    color     = request.form['color']
-    ipsel = request.form['ipsel']
     
-    arp_entry = gui.get_table()[ipsel]
-    gui.clear_color(color)
+    # Set new values to the table
     arp_entry['color'] = color
     if len(alias): arp_entry['alias'] = alias
 
     return render_template(
         'form_action.html',
-        alias = alias,
-        color = color,
-        maddr = arp_entry["mac"])
+        action = action,
+        alias  = alias,
+        color  = color,
+        maddr  = arp_entry["mac"])
 
 @socketio.on('connect', namespace='/autoreload')
 def client_connect():
