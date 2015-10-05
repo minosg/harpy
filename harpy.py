@@ -73,15 +73,14 @@ def disable():
   """ Stop the allert reporting"""
 
   arph.set_mute(True)
-  return report_and_redir("Notifications Supended","/",3)
+  return report_and_redir("Notifications Supended","/",1)
 
-    
 @app.route('/enable')
 def enable():
   """ Start the allert reporting """
 
   arph.set_mute(False)
-  return report_and_redir("Notifications Enabled","/",3)
+  return report_and_redir("Notifications Enabled","/",1)
 
 @app.route('/form/', methods=['POST'])
 def form():

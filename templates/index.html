@@ -35,6 +35,20 @@
       <body onLoad="mutecheck()">
       <h2>Program Loaded!</h2>
       The date and time on the server is: {{ time }}
+      <table>
+          <tr>
+              <td>Reporting </td>
+              <td>
+                  <div class="sliderswitch">
+                  <input type="checkbox" name="sliderswitch" onclick='slidertoggled(this);' class="sliderswitch-checkbox" id="mysliderswitch">
+                      <label class="sliderswitch-label" for="mysliderswitch">
+                          <span class="sliderswitch-inner"></span>
+                          <span class="sliderswitch-switch"></span>
+                      </label>
+                  </div>
+              </td>
+          </tr>
+      </table> 
       <div>
           <div id="container">
               <div class="title">
@@ -47,12 +61,5 @@
           </div>
       </div>
         <a href="/add" class="btn">Add/Remove</a>
-        <div class="sliderswitch">
-        <input type="checkbox" name="sliderswitch" onclick='slidertoggled(this);' class="sliderswitch-checkbox" id="mysliderswitch">
-            <label class="sliderswitch-label" for="mysliderswitch">
-                <span class="sliderswitch-inner"></span>
-                <span class="sliderswitch-switch"></span>
-            </label>
-        </div>
    </body>
 </html>
