@@ -107,6 +107,9 @@ def form():
     arp_entry['color'] = color
     if len(alias): arp_entry['alias'] = alias
 
+    # Save the configuration to file
+    cfg.save_config(arph.get_table())
+
     return render_template(
         'form_action.html',
         action = action,
@@ -132,4 +135,7 @@ def client_disconnect():
     gui.stop()
 
 if __name__ == "__main__":
+    try: arph.arp_table = cfg.load_config()
+    except IOError: pass
     socketio.run(app)
+
