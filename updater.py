@@ -19,8 +19,10 @@ from datetime import datetime, timedelta
 
 thread_stop_event = Event()
 
+
 class PageUpdater(Thread):
-    def __init__(self, socketio_srv, arp_table_ref, poll_delay = 2):
+
+    def __init__(self, socketio_srv, arp_table_ref, poll_delay=2):
         self.delay = poll_delay
         self.socketio = socketio_srv
         self.arp_table = arp_table_ref
@@ -28,31 +30,45 @@ class PageUpdater(Thread):
         super(PageUpdater, self).__init__()
 
     def get_table(self):
+        """ Expose the internal arp table """
+
         return self.arp_table
 
     def clear_color(self, color):
+        """ Clear a every color refference from a table """
+
         for ipkey in self.arp_table.keys():
             entry = self.arp_table[ipkey]
             modified = False
             try:
-                if entry['color'] == color: entry['color'] = ""
+                if entry['color'] == color:
+                    entry['color'] = ""
                 modified = True
             except KeyError:
-               pass
+                pass
         return modified
 
     def refresh(self):
-        headers = ["IP","MAC","Hostname","Alias", "Last Seen", "Color"]
-        return tabularize_data(headers,self.arp_table)
+        """ Rerender the table """
+
+        headers = ["IP", "MAC", "Hostname", "Alias", "Last Seen", "Color"]
+        return tabularize_data(headers, self.arp_table)
 
     def run(self):
+        """ Main Loop, re-renders table and pushes to client with js"""
+
         while not self._stop.isSet():
             test_text = self.refresh()
-            self.socketio.emit('newData', {'payload': test_text}, namespace='/autoreload')
+            self.socketio.emit(
+                'newData', {
+                    'payload': test_text}, namespace='/autoreload')
             sleep(self.delay)
 
     def stop(self):
-      self._stop.set()
+        """ Kill the thread """
+
+        self._stop.set()
+
 
 if __name__ == "__main__":
     pass
