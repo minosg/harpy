@@ -56,7 +56,8 @@ def main():
     timeString = now.strftime("%Y-%m-%d %H:%M")
     templateData = {
         'title': 'Harpy!',
-        'time': timeString
+        'time': timeString,
+        'muteflag': arph.mute
     }
     return render_template('index.html', **templateData)
 

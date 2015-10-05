@@ -5,9 +5,34 @@
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
       <script src="static/js/application.js"></script>
+      <script> 
+          function slidertoggled(cb) {
+              if (cb.checked)
+              {
+                  window.location = "/enable";
+              } 
+              else
+              {
+                  window.location = "/disable";
+              }
+          }
+
+          function mutecheck()
+          {
+              if ("{{muteflag}}" == "True")
+              {
+                document.getElementById("mysliderswitch").checked = false;
+              }
+              else
+              {
+                document.getElementById("mysliderswitch").checked = true;
+              }
+          }
+      </script>
    </head>
 
    <body>
+      <body onLoad="mutecheck()">
       <h2>Program Loaded!</h2>
       The date and time on the server is: {{ time }}
       <div>
@@ -22,5 +47,12 @@
           </div>
       </div>
         <a href="/add" class="btn">Add/Remove</a>
+        <div class="sliderswitch">
+        <input type="checkbox" name="sliderswitch" onclick='slidertoggled(this);' class="sliderswitch-checkbox" id="mysliderswitch">
+            <label class="sliderswitch-label" for="mysliderswitch">
+                <span class="sliderswitch-inner"></span>
+                <span class="sliderswitch-switch"></span>
+            </label>
+        </div>
    </body>
 </html>

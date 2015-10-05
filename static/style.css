@@ -156,3 +156,48 @@ form input[type=submit]:hover {
   text-decoration: none;
 }
 
+.sliderswitch {
+    position: relative; width: 65px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.sliderswitch-checkbox {
+    display: none;
+}
+.sliderswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.sliderswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.sliderswitch-inner:before, .sliderswitch-inner:after {
+    display: block; float: left; width: 50%; height: 22px; padding: 0; line-height: 22px;
+    font-size: 13px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.sliderswitch-inner:before {
+    content: "ON";
+    padding-left: 10px;
+    background-color: #3498DB; color: #FFFFFF;
+}
+.sliderswitch-inner:after {
+    content: "OFF";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.sliderswitch-switch {
+    display: block; width: 18px; margin: 2px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 39px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.3s ease-in 0s; 
+}
+.sliderswitch-checkbox:checked + .sliderswitch-label .sliderswitch-inner {
+    margin-left: 0;
+}
+.sliderswitch-checkbox:checked + .sliderswitch-label .sliderswitch-switch {
+    right: 0px; 
+}
