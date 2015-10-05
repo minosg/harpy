@@ -29,6 +29,7 @@ class AllertManager():
 
     def detectOS(self):
         """ Detect the running OS and set the notification cmd """
+
         systm = platform.system()
 
         # Detect Linux
@@ -39,11 +40,13 @@ class AllertManager():
             elif "armv7l" in platform.uname()[4]:
                 try:
                     self.pb = PiBlinker()
-                    self.led_mode = True
+                    test_res = self.pb.test_hardware()
+                    if test_res: self.led_mode = True
+                    else: 
+                        print "Piblinker shield missing,using wall"
+                        del(self.pb)
                 except NameError:
                     print "Piblinker not found falling back to wall"
-                except ImportError:
-                    print "Piblinker shield missing falling back to wall"
                 cmd = "wall \"%s\""
             else:
                 cmd = "wall \"%s\""
@@ -62,6 +65,7 @@ class AllertManager():
 
     def broadcast(self, message, color=None):
         """ Send the notification message and blink LED if color"""
+
         # If the sheild is attached use it as well
         if self.led_mode and color:
             try:
