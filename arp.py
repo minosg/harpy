@@ -34,6 +34,7 @@ class ARPHandler(Thread):
     self.prune_period = prune_period
     self.am = AllertManager()
     self._stop = Event()
+    self.mute = False
     super(ARPHandler, self).__init__()
 
   def get_table(self):
@@ -108,6 +109,10 @@ class ARPHandler(Thread):
       else:
         self.arp_table[ip] = entry
         return True
+
+      # If mute is asserted do not report
+      if self.mute: return False
+      
       # Only broadcast allert if the device is tracked
       try: color = self.arp_table[ip]['color']
       except KeyError: color = ''
@@ -132,8 +137,12 @@ class ARPHandler(Thread):
           self.fake_data()
           sleep(self.delay)
       print "ARP THREAD QUIT"
+
   def stop(self):
     self._stop.set()
+
+  def set_mute(self, mute = True):
+      self.mute = mute
 
 if __name__ == "__main__":
     ah = ARPHandler()

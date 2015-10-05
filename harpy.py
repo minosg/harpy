@@ -69,22 +69,18 @@ def add():
 
 @app.route('/disable')
 def disable():
-  """ Stop the allert thread"""
- 
-  if arph.isAlive():
-    arph.stop()
-  return redirect("/", code=302)
+  """ Stop the allert reporting"""
+
+  arph.set_mute(True)
+  return report_and_redir("Notifications Supended","/",3)
+
     
 @app.route('/enable')
 def enable():
-  """ Start the allert thread """
+  """ Start the allert reporting """
 
-  # TODO make it maintain the table, using config or deepcopy
-  try: del(arph)
-  except UnboundLocalError: pass
-  arph = ARPHandler()
-  arph.start()
-  return redirect("/", code=302)
+  arph.set_mute(False)
+  return report_and_redir("Notifications Enabled","/",3)
 
 @app.route('/form/', methods=['POST'])
 def form():

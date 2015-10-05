@@ -68,5 +68,13 @@ def datetime_to_human(dt):
 
     return dt.strftime("%w %b %Y %H:%M:%S")
 
+def report_and_redir(msg, rpath, time, css = "style.css"):
+    """ Show a text based hmtl report and redirect to page """
+
+    return "<head><link rel=stylesheet type=text/css \
+        href=\"static/%s\"><script type=\"text/JavaScript\">\
+        setTimeout(\"location.href = '%s';\",%d);</script></head>\
+        <body><h2>%s</h2></body>"%(css,rpath,time*1000,msg)
+
 if __name__ == "__main__":
     pass
