@@ -15,10 +15,10 @@ from datetime import datetime
 from flask import *
 from flask.ext.socketio import SocketIO, emit
 
-from formatutils import *
-from updater import PageUpdater
-from arp import ARPHandler
-from config import ConfigManager
+from modules.formatutils import *
+from modules.updater import PageUpdater
+from modules.arp import ARPHandler
+from modules.config import ConfigManager
 
 # Test DataSet
 # TODO remove it when testing is complete

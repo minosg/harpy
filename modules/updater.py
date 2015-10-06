@@ -28,6 +28,7 @@ class PageUpdater(Thread):
         self.arp_table = arp_table_ref
         self._stop = Event()
         super(PageUpdater, self).__init__()
+        self.daemon = True
 
     def get_table(self):
         """ Expose the internal arp table """

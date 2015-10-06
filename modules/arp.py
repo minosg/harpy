@@ -161,10 +161,12 @@ class ARPHandler(Thread):
 
     def stop(self):
         """ Kill the thread """
+
         self._stop.set()
 
     def set_mute(self, mute=True):
-       """ Disable Thread Reporting """
+        """ Disable Thread Reporting """
+
         self.mute = mute
 
 

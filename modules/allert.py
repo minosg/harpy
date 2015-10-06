@@ -16,7 +16,7 @@ from subprocess import call, PIPE, Popen
 
 # PiBlinker is not critical but should be imported if it exists
 try:
-    from submodules.piblinker.piblinker import PiBlinker
+    from .submodules.piblinker.piblinker import PiBlinker
 except:
     pass
 
