@@ -37,6 +37,7 @@ class ARPHandler(Thread):
         self._stop = Event()
         self.mute = False
         super(ARPHandler, self).__init__()
+        self.daemon = True
 
     def get_table(self):
         """Expose arp table by refference."""
@@ -59,6 +60,8 @@ class ARPHandler(Thread):
 
     def arp_monitor(self):
         """Threaded monitor proccess."""
+
+        # Spawn yet another thread since sniff will block
 
         # Add background processes
         def background_arp_poll():
@@ -150,8 +153,10 @@ class ARPHandler(Thread):
     def run(self):
         """ Main Thread Loop """
 
+        # Start the main monitor code    
+        self.arp_monitor()
         while not self._stop.isSet():
-            self.fake_data()
+            # Extra tasks can be performed here
             sleep(self.delay)
 
     def stop(self):

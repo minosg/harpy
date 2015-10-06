@@ -2,7 +2,7 @@
 
 """allert.py: OS independant Allert handling ..."""
 
-__author__ = "minos197@gmail.com"
+__author__  = "minos197@gmail.com"
 __license__ = "LGPL"
 __version__ = "0.0.1"
 __email__   = "Minos Galanakis"
@@ -16,7 +16,7 @@ from subprocess import call, PIPE, Popen
 
 # PiBlinker is not critical but should be imported if it exists
 try:
-    from piblinker import PiBlinker
+    from submodules.piblinker.piblinker import PiBlinker
 except:
     pass
 
