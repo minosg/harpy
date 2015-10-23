@@ -64,6 +64,7 @@ class PageUpdater(Thread):
                 'newData', {
                     'payload': test_text}, namespace='/autoreload')
             sleep(self.delay)
+            return
 
     def stop(self):
         """ Kill the thread """

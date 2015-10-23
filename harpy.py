@@ -20,11 +20,6 @@ from modules.updater import PageUpdater
 from modules.arp import ARPHandler
 from modules.config import ConfigManager
 
-# Test DataSet
-# TODO remove it when testing is complete
-from test_dataset import get_data
-data_d = get_data()
-
 # Flask App config
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -36,7 +31,6 @@ socketio = SocketIO(app)
 
 # Start the Background monitor thread
 arph = ARPHandler()
-arph.start()
 
 # User Gui thread
 gui = Thread()
@@ -140,10 +134,8 @@ def client_connect():
 
     # Only start if it its not already started
     if not gui.isAlive():
-        print "Starting Thread"
         gui = PageUpdater(socketio, arph.get_table())
         gui.start()
-
 
 @socketio.on('disconnect', namespace='/autoreload')
 def client_disconnect():
@@ -154,10 +146,17 @@ def client_disconnect():
 
 
 if __name__ == "__main__":
+    import sys
+
     # Load configuration if file exists
     try:
         arph.arp_table = cfg.load_config()
     except IOError:
         pass
+    # Start the ARP monitor
+    if len(sys.argv) == 2 and sys.argv[1] == "-fake":
+        print "Setting up fakedata"
+        arph.set_fake()
+    arph.start()
     # Run the app
     socketio.run(app)

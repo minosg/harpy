@@ -36,6 +36,7 @@ class ARPHandler(Thread):
         self.am = AllertManager()
         self._stop = Event()
         self.mute = False
+        self.fake = False
         super(ARPHandler, self).__init__()
         self.daemon = True
 
@@ -58,20 +59,6 @@ class ARPHandler(Thread):
                  ("color", "")])
             print ("%s %s %s" % (host, ipsrc, hwaddr))
 
-    def arp_monitor(self):
-        """Threaded monitor proccess."""
-
-        # Spawn yet another thread since sniff will block
-
-        # Add background processes
-        def background_arp_poll():
-            sniff(prn=self.arp_monitor_callback, filter="arp", store=0)
-
-        # covert to a thread and start it
-        thread = threading.Thread(target=background_arp_poll)
-        thread.daemon = True
-        thread.start()
-
     def arp_scan(self):
         """Scan the network using ARP requests for alive hosts."""
 
@@ -91,7 +78,9 @@ class ARPHandler(Thread):
     def arp_resolve(self, ip_target):
         """Resolve the hostname for given ip address."""
 
-        return gethostbyaddr(ip_target)[0]
+        try: host = gethostbyaddr(ip_target)[0]
+        except: host = "N.A"
+        return host
 
     def prune(self):
         """Function that will remove old entries from arp_table."""
@@ -143,6 +132,8 @@ class ARPHandler(Thread):
     def fake_data(self):
         # Pick a random device from the fake dataset and remove it
         idx = randint(0, len(data_d) - 1)
+        #Sleep a random number of seconds 
+        sleep(randint(0, 10))
         key = data_d.keys()[idx]
         # Add the new entry in the ARP table (this is will be replaced
         # by arp callbacks
@@ -154,10 +145,20 @@ class ARPHandler(Thread):
         """ Main Thread Loop """
 
         # Start the main monitor code    
-        self.arp_monitor()
+        #self.arp_monitor()
         while not self._stop.isSet():
             # Extra tasks can be performed here
-            sleep(self.delay)
+
+            if self.fake: 
+                self.fake_sniff()
+            else:
+                sniff(prn=self.arp_monitor_callback, filter="arp", store=0)
+
+    def fake_sniff(self):
+        while True: self.fake_data()
+
+    def set_fake(self):
+        self.fake = True
 
     def stop(self):
         """ Kill the thread """
@@ -173,7 +174,9 @@ class ARPHandler(Thread):
 if __name__ == "__main__":
     ah = ARPHandler()
     # print ah.arp_scan()
-    ah.arp_monitor()
+    #ah.arp_monitor()
+    ah.start()
+
     try:
         while True:
             pass
