@@ -24,7 +24,6 @@ from modules.config import ConfigManager
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
-app.config['SERVER_NAME'] = 'localhost:7777'
 
 # Wrap the app to a SocketIO for async tasks
 socketio = SocketIO(app)
@@ -148,6 +147,11 @@ def client_disconnect():
 if __name__ == "__main__":
     import sys
 
+    def getip():
+        """ Get external ip of interface """
+        from subprocess import check_output
+        return check_output(["hostname", "-I"]).split(" ")[0]
+
     # Load configuration if file exists
     try:
         arph.arp_table = cfg.load_config()
@@ -159,4 +163,4 @@ if __name__ == "__main__":
         arph.set_fake()
     arph.start()
     # Run the app
-    socketio.run(app)
+    socketio.run(app,host=getip(), port=5555)
