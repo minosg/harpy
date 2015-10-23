@@ -12,6 +12,15 @@ __date__    = "01-10-2015"
 import os
 import sys
 import platform
+
+
+import gevent.monkey
+gevent.monkey.patch_all(subprocess=True)
+
+import sys
+import gevent.subprocess
+sys.modules['subprocess'] = gevent.subprocess
+
 from subprocess import call, PIPE, Popen
 
 # PiBlinker is not critical but should be imported if it exists
