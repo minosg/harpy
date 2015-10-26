@@ -60,7 +60,6 @@ def add():
     """Render the form enabling user to add a device to monitor."""
 
     # Create the buttons
-
     data = gen_radio_buttons(
         "ipsel",
         "Select the device  you wish to bind",
@@ -133,7 +132,7 @@ def client_connect():
 
     # Only start if it its not already started
     if not gui.isAlive():
-        gui = PageUpdater(socketio, arph.get_table())
+        gui = PageUpdater(socketio, arph.get_table)
         gui.start()
 
 @socketio.on('disconnect', namespace='/autoreload')
@@ -146,7 +145,7 @@ def client_disconnect():
 
 if __name__ == "__main__":
     import sys
-
+    import time
     def getip():
         """ Get external ip of interface """
         from subprocess import check_output
@@ -159,8 +158,14 @@ if __name__ == "__main__":
         pass
     # Start the ARP monitor
     if len(sys.argv) == 2 and sys.argv[1] == "-fake":
-        print "Setting up fakedata"
+        print "Setting up fake dataset"
         arph.set_fake()
+
+    # Start the ARP handler
     arph.start()
+
     # Run the app
     socketio.run(app,host=getip(), port=5555)
+
+    # Stop the forked proccess
+    # arph.join()

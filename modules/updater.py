@@ -22,10 +22,11 @@ thread_stop_event = Event()
 
 class PageUpdater(Thread):
 
-    def __init__(self, socketio_srv, arp_table_ref, poll_delay=2):
+    def __init__(self, socketio_srv, arp_table_retriever, poll_delay=2):
         self.delay = poll_delay
         self.socketio = socketio_srv
-        self.arp_table = arp_table_ref
+        self.fetch_table =  arp_table_retriever
+        self.arp_table = self.fetch_table()
         self._stop = Event()
         super(PageUpdater, self).__init__()
         self.daemon = True
@@ -52,6 +53,9 @@ class PageUpdater(Thread):
     def refresh(self):
         """ Rerender the table """
 
+        self.fetch_table()
+        print "Refreshing",len(self.arp_table)
+
         headers = ["IP", "MAC", "Hostname", "Alias", "Last Seen", "Color"]
         return tabularize_data(headers, self.arp_table)
 
@@ -60,6 +64,7 @@ class PageUpdater(Thread):
 
         while not self._stop.isSet():
             test_text = self.refresh()
+
             self.socketio.emit(
                 'newData', {
                     'payload': test_text}, namespace='/autoreload')
