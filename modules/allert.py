@@ -24,11 +24,12 @@ sys.modules['subprocess'] = gevent.subprocess
 from subprocess import call, PIPE, Popen
 
 # PiBlinker is not critical but should be imported if it exists
-try:
-    from .submodules.piblinker.piblinker import PiBlinker
-except:
-    pass
+try:  from .submodules.piblinker.piblinker import PiBlinker
+except:  pass
 
+# Piblinker could be installed as a global library
+try:  from piblinker import PiBlinker
+except:  pass
 
 class AllertManager():
 

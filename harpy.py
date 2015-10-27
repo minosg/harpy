@@ -9,6 +9,9 @@ __email__   = "minos197@gmail.com"
 __project__ = "harpy"
 __date__    = "25-09-2015"
 
+from gevent import monkey
+monkey.patch_all()
+
 from threading import Thread, Event
 from datetime import datetime
 
@@ -134,6 +137,7 @@ def client_connect():
     if not gui.isAlive():
         gui = PageUpdater(socketio, arph.get_table)
         gui.start()
+        print "Started"
 
 @socketio.on('disconnect', namespace='/autoreload')
 def client_disconnect():
@@ -168,4 +172,4 @@ if __name__ == "__main__":
     socketio.run(app,host=getip(), port=5555)
 
     # Stop the forked proccess
-    # arph.join()
+    arph.join()

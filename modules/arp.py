@@ -48,6 +48,7 @@ class ARPHandler(Process):
 
         if not self.txq.empty():
             self.arp_table = self.txq.get()
+        print "ARP Retrieve",self.arp_table.keys()
 
         return self.arp_table
 
@@ -124,30 +125,28 @@ class ARPHandler(Process):
         """Add a new entry to the ARP table and allert if it exists and 
         is tracked."""
 
+        #print "\nEntry", entry, len(self.arp_table), hex(id(self.arp_table)),self.arp_table.keys()
         # if there is a new table from application copy it to memory
         if not self.rxq.empty():
+            print "Rx-sync"
             self.arp_table = self.rxq.get()
+
+        # If there is space in the queue push the table from memory
+        if self.txq.empty():  self.txq.put(self.arp_table)
 
         # If the device has the same IP as before
         if ip in self.arp_table.keys() and entry[
-                'mac'] == self.arp_table[ip]['mac']:
-            pass
+                'mac'] == self.arp_table[ip]['mac']: pass
         # If the ip has been modified but address still registered
         elif entry['mac'] in repr(self.arp_table):
             for key in self.arp_table:
                 if self.arp_table[key]['mac'] == entry['mac']:
                     break
-                else:
-                    return False
+                else: return False
         # If it does not exist add it to the table
         else:
             self.arp_table[ip] = entry
-            # Only store if if the Queue class is emtpy,discard otherwise
-            try:
-                self.txq.put(self.arp_table, False)
-                return True
-            except: return False
-
+            return True
 
         # If mute is asserted do not report
         if self.mute:
@@ -178,7 +177,7 @@ class ARPHandler(Process):
         # by arp callbacks
         tempentry = data_d[key]
         tempentry["time"] = datetime.now()
-        print "Added",self.add_to_table(key, tempentry)
+        self.add_to_table(key, tempentry)
 
     def run(self):
         """ Main Thread Loop """

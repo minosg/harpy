@@ -51,10 +51,9 @@ class PageUpdater(Thread):
         return modified
 
     def refresh(self):
-        """ Rerender the table """
+        """ Rerender the table calling the external getter method """
 
-        self.fetch_table()
-        print "Refreshing",len(self.arp_table)
+        self.arp_table = self.fetch_table()
 
         headers = ["IP", "MAC", "Hostname", "Alias", "Last Seen", "Color"]
         return tabularize_data(headers, self.arp_table)
@@ -69,7 +68,6 @@ class PageUpdater(Thread):
                 'newData', {
                     'payload': test_text}, namespace='/autoreload')
             sleep(self.delay)
-            return
 
     def stop(self):
         """ Kill the thread """
