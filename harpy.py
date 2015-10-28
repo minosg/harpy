@@ -92,9 +92,11 @@ def form():
 
     # Get targets ip and clear any existing color
     ipsel = request.form['ipsel']
-    arp_entry = gui.get_table()[ipsel]
+    temp_table = arph.get_table()
+    arp_entry = temp_table[ipsel]
 
     # If remove button has been checked clear color and return to home
+    # TODO Fix it for new way of handling the tables
     try:
         request.form['remove']
         action = "removed from"
@@ -115,8 +117,11 @@ def form():
     if len(alias):
         arp_entry['alias'] = alias
 
-    # Save the configuration to file
-    cfg.save_config(arph.get_table())
+    # Update the table back on the ARP handling proccess
+    arph.update_table(temp_table)
+
+    # Save the new configuration to file
+    cfg.save_config(temp_table)
 
     return render_template(
         'form_action.html',

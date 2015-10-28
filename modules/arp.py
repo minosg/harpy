@@ -48,14 +48,13 @@ class ARPHandler(Process):
 
         if not self.txq.empty():
             self.arp_table = self.txq.get()
-        print "ARP Retrieve",self.arp_table.keys()
 
         return self.arp_table
 
     def update_table(self,table):
         """ Allow the client application to update the proccess ARP table """
 
-        if self.rxq.emtpy:
+        if self.rxq.empty():
             # Copy the table to class memory
             self.arp_table = deepcopy(table)
             # Copy the table to forked proccess memory
@@ -74,7 +73,8 @@ class ARPHandler(Process):
             entry = OrderedDict(
                 [('mac', hwaddr),
                  ('hostname', self.arp_resolve(ipsrc)),
-                 ('alias', ''), ("time", datetime.now()),
+                 ('alias', ''),
+                 ("time", datetime.now()),
                  ("color", "")])
 
             time.sleep(0.1)

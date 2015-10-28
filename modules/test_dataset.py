@@ -13,7 +13,7 @@ __date__    = "01-10-2015"
 from copy import deepcopy
 from random import randint
 from collections import OrderedDict
-
+from datetime import datetime
 
 def random_mac(mode=":"):
     """Return a random mac address."""
@@ -61,7 +61,9 @@ def get_data(router_ip="192.168.0.1"):
         hostname = hosts.pop(0)
         random_dataset[ip] = OrderedDict([('mac', random_mac()),
                                           ('hostname', hostname),
-                                          ('alias', '')])
+                                          ('alias', ''),
+                                          ('time',datetime.now()),
+                                          ("color", "") ])
 
     return deepcopy(random_dataset)
 

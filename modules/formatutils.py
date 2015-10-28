@@ -26,16 +26,12 @@ def tabularize_data(headers, data):
     for entry in data.keys():
         entry_dt = data[entry]
         table_rows += "<tr><td>%s</td>" % entry
-        # TODO. Remove it when dictionary is properly generated
-        if "color" not in entry_dt.keys():
-            entry_dt['color'] = ""
         for e in entry_dt.keys():
             if e == "time":
                 table_rows += "<td>%s</td>" % entry_dt[
                     e].strftime("%w %b %Y %H:%M:%S")
             else:
                 table_rows += "<td>%s</td>" % entry_dt[e]
-
         table_rows += "</tr>"
 
     table_data += table_rows
